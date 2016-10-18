@@ -1,0 +1,9 @@
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import com.sun.javafx.scene.control.skin.ContextMenuContent.MenuBox?>
+<?import com.sun.javafx.scene.control.skin.ToolBarSkin.ToolBarOverflowMenu?>
+<BorderPane fx:controller="sample.Controller" fx:id="BP"
+          xmlns:fx="http://javafx.com/fxml" >
+
+</BorderPane>
