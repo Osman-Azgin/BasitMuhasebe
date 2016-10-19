@@ -23,16 +23,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -242,7 +236,7 @@ public class Main extends Application {
             @Override
             public void handle(TableColumn.CellEditEvent t) {
                 ((Record) t.getTableView().getItems().get(t.getTablePosition().getRow())).setDesc((String) t.getNewValue());
-                 SortData();
+                SortData();
                 updateFooter();
                 selectedIndex=t.getTablePosition().getRow();
                 notSaved=true;
@@ -401,52 +395,34 @@ public class Main extends Application {
     }
 
     public void initRecords(){
-        File fXmlFile = new File(fileNAme);
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
         try {
-
-            dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fXmlFile);
-            doc.getDocumentElement().normalize();
-            NodeList nList = doc.getElementsByTagName("record");
-
             data.removeAll(data);
-
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-
-                Node nNode = nList.item(temp);
-
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                    Element eElement = (Element) nNode;
-
-                    TableView dataTable= (TableView) root.lookup("#kayit-tablosu");
-
-                    String type=eElement.getElementsByTagName("type").item(0).getTextContent();
-
-                    type=(type.equals("Çıktı") || type.equals("Spend")) ? "Spend" : type;
-
-                    type=(type.equals("Girdi") || type.equals("Gain")) ? "Gain" : type;
-
-                    data.add(new Record(type,eElement.getElementsByTagName("title").item(0).getTextContent(),eElement.getElementsByTagName("desc").item(0).getTextContent(),eElement.getElementsByTagName("amount").item(0).getTextContent(),new Date(eElement.getElementsByTagName("record-date").item(0).getTextContent())));
-                    SortData();
-                    dataTable.setItems(FXCollections.observableList(data));
-                    updateFooter();
-                    initFilters();
-                    dataTable.setEditable(true);
-
-                }
+            byte[] encoded = Files.readAllBytes(Paths.get(fileNAme));
+            String content=new String(encoded);
+            int syc=0;
+            for (int i = -1; (i = content.indexOf("<record>", i + 1)) != -1; ) {
+                int start=i+8,length=content.indexOf("</record>",i);
+                String rec=content.substring(start,length);
+                String type=rec.substring(rec.indexOf("<type>")+6,rec.indexOf("</type>"));
+                String title=rec.substring(rec.indexOf("<title>")+7,rec.indexOf("</title>"));
+                String desc=rec.substring(rec.indexOf("<desc>")+6,rec.indexOf("</desc>"));
+                String amount=rec.substring(rec.indexOf("<amount>")+8,rec.indexOf("</amount>"));
+                String recordDate=rec.substring(rec.indexOf("<record-date>")+13,rec.indexOf("</record-date>"));
+                type=(type.equals("Çıktı") || type.equals("Spend")) ? "Spend" : type;
+                type=(type.equals("Girdi") || type.equals("Gain")) ? "Gain" : type;
+                data.add(new Record(type,title,desc,amount,new Date(recordDate)));
+                syc++;
             }
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            TableView dataTable= (TableView) root.lookup("#kayit-tablosu");
+            SortData();
+            dataTable.setItems(FXCollections.observableList(data));
+            updateFooter();
+            initFilters();
+            dataTable.setEditable(true);
+            System.out.print(syc+" Records Found");
+        }catch (IOException E){
+            System.out.print("The File is Unable to Open");
         }
-
     }
 
     public void initSaved(){
@@ -508,8 +484,8 @@ public class Main extends Application {
 
     public void deleteRecord(int index){
         if(new Integer(-1).equals(index)==false) {
-            data.remove(index);
             TableView dataTable = (TableView) root.lookup("#kayit-tablosu");
+             data.remove(dataTable.getItems().get(index));
             dataTable.setItems(FXCollections.observableList(data));
             root.lookup("#kayit-sil").setDisable(true);
             SortData();
