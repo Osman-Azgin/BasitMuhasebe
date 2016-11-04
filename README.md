@@ -4,7 +4,7 @@
 This is a basic accounting program.You can add gains and spends to opened ledger and save as .bm extensioned file.This do spending and saving analysis with records.This writes how many day for end of the mount,top gain/spend and saving to footer. 
 
 
-INSTALITION
+INSTALLITION
 
 1-Download the this repo.       
 2-Then go to BasitMuhasebe_TR/EN.           
