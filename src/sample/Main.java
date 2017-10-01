@@ -85,36 +85,36 @@ public class Main extends Application {
         hbox.setSpacing(10);
         hbox.setStyle("-fx-background-color:linear-gradient(#FFF 0%, #FBFBFB 10%, #D9D9D9 100%);");
 
-        Button buttonYeniHesapDefteri = new Button("New Ledger");
+        Button buttonYeniHesapDefteri = new Button("Yeni Hesap Defteri");
         buttonYeniHesapDefteri.setPrefSize(150, 20);
         buttonYeniHesapDefteri.setId("yeni-hesap-defteri");
 
-        Button buttonHesapDefteriAc = new Button("Open a Ledger");
+        Button buttonHesapDefteriAc = new Button("Hesap Defteri Aç");
         buttonHesapDefteriAc.setPrefSize(150, 20);
         buttonHesapDefteriAc.setId("hesap-defteri-ac");
 
-        Button buttonKaydet = new Button("Save");
+        Button buttonKaydet = new Button("Kaydet");
         buttonKaydet.setPrefSize(100, 20);
         buttonKaydet.setId("kaydet");
         buttonKaydet.setDisable(true);
 
-        Button buttonGirdiEkle = new Button("Add Gain");
+        Button buttonGirdiEkle = new Button("Girdi Ekle");
         buttonGirdiEkle.setPrefSize(100, 20);
         buttonGirdiEkle.setId("girdi-ekle");
 
-        Button buttonCiktiEkle = new Button("Add Spend");
+        Button buttonCiktiEkle = new Button("Çıktı Ekle");
         buttonCiktiEkle.setPrefSize(100, 20);
         buttonCiktiEkle.setId("cikti-ekle");
 
-        Button buttonKayitSil = new Button("Delete Record");
+        Button buttonKayitSil = new Button("Kayıt Sil");
         buttonKayitSil.setPrefSize(100, 20);
         buttonKayitSil.setId("kayit-sil");
 
-        Button buttonAnalizEt = new Button("Spending Analysis");
+        Button buttonAnalizEt = new Button("Harcama Analizi");
         buttonAnalizEt.setPrefSize(150, 20);
         buttonAnalizEt.setId("analiz-et");
 
-        Button buttonTasarrufAnalizi = new Button("Saving Analysis");
+        Button buttonTasarrufAnalizi = new Button("Tasarruf Analizi");
         buttonTasarrufAnalizi.setPrefSize(150, 20);
         buttonTasarrufAnalizi.setId("tasarruf-analizi-yap");
 
@@ -152,14 +152,14 @@ public class Main extends Application {
         buttonGirdiEkle.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                addRecord("Gain",null,null,null);
+                addRecord("Girdi",null,null,null);
             }
         });
 
         buttonCiktiEkle.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                addRecord("Spend",null,null,null);
+                addRecord("Çıktı",null,null,null);
             }
         });
 
@@ -212,7 +212,7 @@ public class Main extends Application {
         TableView dataTable = new TableView();
         dataTable.setPrefWidth(bounds.getWidth());
 
-        TableColumn title=new TableColumn("Definition");
+        TableColumn title=new TableColumn("Tanım");
         title.setCellValueFactory(new PropertyValueFactory<>("title"));
         title.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.2));
         title.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -228,7 +228,7 @@ public class Main extends Application {
             }
         });
 
-        TableColumn desc=new TableColumn("Description");
+        TableColumn desc=new TableColumn("Açıklama");
         desc.setCellValueFactory(new PropertyValueFactory<>("desc"));
         desc.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.3));
         desc.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -244,7 +244,7 @@ public class Main extends Application {
             }
         });
 
-        TableColumn amount=new TableColumn("Amount");
+        TableColumn amount=new TableColumn("Miktar");
         amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amount.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.2));
         amount.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -260,11 +260,11 @@ public class Main extends Application {
             }
         });
 
-        TableColumn type=new TableColumn("Gain/Spend");
+        TableColumn type=new TableColumn("Girdi/Çıktı");
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
         type.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.1));
 
-        TableColumn date=new TableColumn("Record Date");
+        TableColumn date=new TableColumn("Kayıt Tarihi");
         date.setCellValueFactory(new PropertyValueFactory<>("recordDate"));
         date.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.2));
         date.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -325,7 +325,7 @@ public class Main extends Application {
         label2.setStyle("-fx-color-label-visible: #D9D9D9;-fx-padding: 3px;-fx-min-width: 70px;");
 
         ArrayList<String> titles = getTitiles();
-        titles.add("All Definitions");
+        titles.add("Tüm Tanımlar");
 
 
         ComboBox titleComboBox = new ComboBox(FXCollections.observableArrayList(titles));
@@ -340,7 +340,7 @@ public class Main extends Application {
 
 
         ArrayList<String> mounts = getMounts();
-        mounts.add("All Mounts");
+        mounts.add("Tüm Aylar");
 
         ComboBox mountComboBox = new ComboBox(FXCollections.observableArrayList(mounts));
         mountComboBox.setStyle("-fx-min-width: 150px");
@@ -358,13 +358,13 @@ public class Main extends Application {
 
     public void updateFooter() {
         try {
-            int topAvard = 0, topSpend = 0, saving;
+            double topAvard = 0, topSpend = 0, saving;
             String Today=today.substring(0,2);
             int dInM = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
             int day = dInM - new Integer(Today);
 
             for (Record record : data) {
-                if (record.getType().equals("Gain")) {
+                if (record.getType().equals("Girdi")) {
                     topAvard += Double.parseDouble(record.getAmount());
                 } else {
                     topSpend += Double.parseDouble(record.getAmount());
@@ -372,13 +372,13 @@ public class Main extends Application {
             }
             saving = topAvard - topSpend;
             TextField bilig = (TextField) root.lookup("#bilgi");
-            bilig.setText("There Are " + day + " days end of mount. Total Gain : " + topAvard + ", Total Spend : " + topSpend + ", Remaining : " + saving);
+            bilig.setText("Ayın Bitmesine " + day + " gün var. Toplam Girdi : " + topAvard + ", Toplam Çıktı : " + topSpend + ", Kalan : " + saving);
 
             ArrayList<String> titles = getTitiles();
-            titles.add("All Definitions");
+            titles.add("Tüm Tanımlar");
 
             ArrayList<String> mounts = getMounts();
-            mounts.add("All Mounts");
+            mounts.add("Tüm Aylar");
 
             ComboBox title=(ComboBox) root.lookup("#filter-titles");
             ComboBox mount=(ComboBox) root.lookup("#filter-mounts");
@@ -408,8 +408,8 @@ public class Main extends Application {
                 String desc=rec.substring(rec.indexOf("<desc>")+6,rec.indexOf("</desc>"));
                 String amount=rec.substring(rec.indexOf("<amount>")+8,rec.indexOf("</amount>"));
                 String recordDate=rec.substring(rec.indexOf("<record-date>")+13,rec.indexOf("</record-date>"));
-                type=(type.equals("Çıktı") || type.equals("Spend")) ? "Spend" : type;
-                type=(type.equals("Girdi") || type.equals("Gain")) ? "Gain" : type;
+                type=(type.equals("Çıktı") || type.equals("Spend")) ? "Çıktı" : type;
+                type=(type.equals("Girdi") || type.equals("Gain")) ? "Girdi" : type;
                 data.add(new Record(type,title,desc,amount,new Date(recordDate)));
                 syc++;
             }
@@ -499,10 +499,10 @@ public class Main extends Application {
         ComboBox titles=(ComboBox) root.lookup("#filter-titles");
         ComboBox mounts=(ComboBox) root.lookup("#filter-mounts");
         if(titles.getValue()==null){
-            titles.getSelectionModel().select("All Definitions");
+            titles.getSelectionModel().select("Tüm Tanımlar");
         }
         if(mounts.getValue()==null) {
-            mounts.getSelectionModel().select("All Mounts");
+            mounts.getSelectionModel().select("Tüm Aylar");
         }
     }
 
@@ -512,8 +512,8 @@ public class Main extends Application {
             public boolean handle(Record fil) {
                 ComboBox titles=(ComboBox) root.lookup("#filter-titles");
                 ComboBox mounts=(ComboBox) root.lookup("#filter-mounts");
-                String title=(titles.getValue()!=null && titles.getValue().equals("All Definitions")!=true) ? (String) titles.getValue() : null;
-                String mount=(mounts.getValue()!=null && mounts.getValue().equals("All Mounts")!=true) ? (String) mounts.getValue(): null;
+                String title=(titles.getValue()!=null && titles.getValue().equals("Tüm Tanımlar")!=true) ? (String) titles.getValue() : null;
+                String mount=(mounts.getValue()!=null && mounts.getValue().equals("Tüm Aylar")!=true) ? (String) mounts.getValue(): null;
                 boolean retval=true;
                 if((title!=null && fil.getTitle().equals(title)!=true) || (mount!=null && fil.getRecordDate().substring(3,fil.getRecordDate().length()).equals(mount)!=true)){
                     retval=false;
@@ -527,8 +527,8 @@ public class Main extends Application {
 
     public void Analysis(){
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Analysis Results");
-        dialog.setHeaderText("Results Of Spending Analysis");
+        dialog.setTitle("Analiz Sonuçları");
+        dialog.setHeaderText("Harcama Analizi Sonuçları");
         ButtonType cancelButtonType = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(cancelButtonType);
 
@@ -540,19 +540,19 @@ public class Main extends Application {
 
         TableView resultTable = new TableView();
         resultTable.setPrefWidth(grid.getPrefWidth());
-        TableColumn title=new TableColumn("Definition");
+        TableColumn title=new TableColumn("Tanım");
         title.setCellValueFactory(new PropertyValueFactory<>("title"));
         title.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-        TableColumn thisMount =new TableColumn("This Mount");
+        TableColumn thisMount =new TableColumn("Bu Ay");
         thisMount.setCellValueFactory(new PropertyValueFactory<>("thisMount"));
         thisMount.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-        TableColumn total =new TableColumn("All Mounts");
+        TableColumn total =new TableColumn("Tüm Aylar");
         total.setCellValueFactory(new PropertyValueFactory<>("total"));
         total.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-        TableColumn average =new TableColumn("Average");
+        TableColumn average =new TableColumn("Ortalama");
         average.setCellValueFactory(new PropertyValueFactory<>("average"));
         average.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
@@ -569,8 +569,8 @@ public class Main extends Application {
 
     public void savingAnalysis(){
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Analysis Results");
-        dialog.setHeaderText("Results Of Saving Analysis");
+        dialog.setTitle("Analiz Sonuçları");
+        dialog.setHeaderText("Tasarruf Analizi Sonuçları");
         ButtonType cancelButtonType = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(cancelButtonType);
 
@@ -583,19 +583,19 @@ public class Main extends Application {
         TableView resultTable = new TableView();
         resultTable.setPrefWidth(grid.getPrefWidth());
 
-        TableColumn mount=new TableColumn("Mounth");
+        TableColumn mount=new TableColumn("Ay");
         mount.setCellValueFactory(new PropertyValueFactory<>("mount"));
         mount.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-        TableColumn avard=new TableColumn("Total Gain");
+        TableColumn avard=new TableColumn("Toplam Girdi");
         avard.setCellValueFactory(new PropertyValueFactory<>("avard"));
         avard.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-        TableColumn spend=new TableColumn("Total Spend");
+        TableColumn spend=new TableColumn("Toplam Çıktı");
         spend.setCellValueFactory(new PropertyValueFactory<>("spend"));
         spend.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
-            TableColumn saving =new TableColumn("Saving");
+            TableColumn saving =new TableColumn("Tasarruf");
         saving.setCellValueFactory(new PropertyValueFactory<>("saving"));
         saving.prefWidthProperty().bind(resultTable.widthProperty().multiply(0.25));
 
@@ -727,9 +727,9 @@ public class Main extends Application {
     public ArrayList doSavingAnalysis(){
         ArrayList<savingAnalysisResult> Results=new ArrayList<>();
         ArrayList<String> mounts=getMounts();
-        int savingFromLastMont=0;
+        double savingFromLastMont=0;
         for(String mount:mounts){
-            int avard=0,spend=0,saving=0;
+            double avard=0,spend=0,saving=0;
             ArrayList<Record> recordsOfMount = filter(data, new filterHandler() {
                 @Override
                 public boolean handle(Record fil) {

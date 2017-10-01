@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_basitmuhasebe-master" default="compile.module.basitmuhasebe-master">
+  <dirname property="module.basitmuhasebe-master.basedir" file="${ant.file.module_basitmuhasebe-master}"/>
+  
+  <property name="module.jdk.home.basitmuhasebe-master" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.basitmuhasebe-master" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.basitmuhasebe-master" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.basitmuhasebe-master" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="basitmuhasebe-master.output.dir" value="${module.basitmuhasebe-master.basedir}/out/production/BasitMuhasebe-master"/>
+  <property name="basitmuhasebe-master.testoutput.dir" value="${module.basitmuhasebe-master.basedir}/out/test/BasitMuhasebe-master"/>
+  
+  <path id="basitmuhasebe-master.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="basitmuhasebe-master.module.production.classpath">
+    <path refid="${module.jdk.classpath.basitmuhasebe-master}"/>
+  </path>
+  
+  <path id="basitmuhasebe-master.runtime.production.module.classpath">
+    <pathelement location="${basitmuhasebe-master.output.dir}"/>
+  </path>
+  
+  <path id="basitmuhasebe-master.module.classpath">
+    <path refid="${module.jdk.classpath.basitmuhasebe-master}"/>
+    <pathelement location="${basitmuhasebe-master.output.dir}"/>
+  </path>
+  
+  <path id="basitmuhasebe-master.runtime.module.classpath">
+    <pathelement location="${basitmuhasebe-master.testoutput.dir}"/>
+    <pathelement location="${basitmuhasebe-master.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.basitmuhasebe-master">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.basitmuhasebe-master">
+    <patternset refid="excluded.from.module.basitmuhasebe-master"/>
+  </patternset>
+  
+  <path id="basitmuhasebe-master.module.sourcepath">
+    <dirset dir="${module.basitmuhasebe-master.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.basitmuhasebe-master" depends="compile.module.basitmuhasebe-master.production,compile.module.basitmuhasebe-master.tests" description="Compile module BasitMuhasebe-master"/>
+  
+  <target name="compile.module.basitmuhasebe-master.production" depends="register.custom.compilers" description="Compile module BasitMuhasebe-master; production classes">
+    <mkdir dir="${basitmuhasebe-master.output.dir}"/>
+    <javac2 destdir="${basitmuhasebe-master.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.basitmuhasebe-master}/javac">
+      <compilerarg line="${compiler.args.basitmuhasebe-master}"/>
+      <bootclasspath refid="basitmuhasebe-master.module.bootclasspath"/>
+      <classpath refid="basitmuhasebe-master.module.production.classpath"/>
+      <src refid="basitmuhasebe-master.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.basitmuhasebe-master"/>
+    </javac2>
+    
+    <copy todir="${basitmuhasebe-master.output.dir}">
+      <fileset dir="${module.basitmuhasebe-master.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.basitmuhasebe-master.tests" depends="register.custom.compilers,compile.module.basitmuhasebe-master.production" description="compile module BasitMuhasebe-master; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.basitmuhasebe-master" description="cleanup module">
+    <delete dir="${basitmuhasebe-master.output.dir}"/>
+    <delete dir="${basitmuhasebe-master.testoutput.dir}"/>
+  </target>
+</project>
